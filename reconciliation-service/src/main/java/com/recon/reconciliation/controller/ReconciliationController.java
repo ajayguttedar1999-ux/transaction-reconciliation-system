@@ -22,7 +22,7 @@ public class ReconciliationController {
 
     @PostMapping("/trigger")
     public ResponseEntity<ReconRunEntity> triggerReconciliation(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         LocalDate reconDate = (date != null) ? date : LocalDate.now();
         return ResponseEntity.ok(reconciliationService.runReconciliation(reconDate));
     }
@@ -33,7 +33,7 @@ public class ReconciliationController {
     }
 
     @GetMapping("/{runId}")
-    public ResponseEntity<ReconRunEntity> getRunDetails(@PathVariable String runId) {
+    public ResponseEntity<ReconRunEntity> getRunDetails(@PathVariable("runId") String runId) {
         return reconciliationService.getRunById(runId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
