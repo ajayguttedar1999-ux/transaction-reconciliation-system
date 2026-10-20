@@ -50,7 +50,9 @@ public class ReconciliationService {
 
         Map<String, BigDecimal> txnTotals = new HashMap<>();
         for (Object[] row : txnAggregates) {
-            txnTotals.put((String) row[0], (BigDecimal) row[1]);
+            String prod = String.valueOf(row[0]);
+            BigDecimal qty = row[1] != null ? new BigDecimal(row[1].toString()) : BigDecimal.ZERO;
+            txnTotals.put(prod, qty);
         }
 
         @SuppressWarnings("unchecked")
@@ -60,7 +62,9 @@ public class ReconciliationService {
 
         Map<String, BigDecimal> posTotals = new HashMap<>();
         for (Object[] row : posAggregates) {
-            posTotals.put((String) row[0], (BigDecimal) row[1]);
+            String prod = String.valueOf(row[0]);
+            BigDecimal qty = row[1] != null ? new BigDecimal(row[1].toString()) : BigDecimal.ZERO;
+            posTotals.put(prod, qty);
         }
 
         Set<String> allProducts = new HashSet<>();

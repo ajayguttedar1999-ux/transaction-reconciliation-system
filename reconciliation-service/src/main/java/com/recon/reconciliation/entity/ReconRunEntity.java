@@ -29,7 +29,7 @@ public class ReconRunEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
-    @OneToMany(mappedBy = "reconRun", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "reconRun", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ReconBalanceResultEntity> results = new ArrayList<>();
 
     public ReconRunEntity() {}
