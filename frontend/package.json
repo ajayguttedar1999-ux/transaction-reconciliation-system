@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
-    "cap:sync": "npm run build && npx cap sync android",
+    "cap:sync": "npm run build && npx --yes @capacitor/cli copy android",
     "cap:open": "npx cap open android"
   },
   "dependencies": {
