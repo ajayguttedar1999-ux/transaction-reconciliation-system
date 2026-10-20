@@ -131,6 +131,16 @@ npm run dev
 ```
 Open **`http://localhost:3000`** in your browser.
 
+#### 🖥️ Dashboard Features:
+* **Interactive 6-Tab Console**:
+  1. ➕ **Book Trade**: Ingests new trades with quick-select presets for Apple, Tesla, and Microsoft.
+  2. 📋 **Trade Ledger**: Real-time trade log with formatted currency notional calculations.
+  3. ⚖️ **Reconciliation Runs**: Automated Sum(Transactions) vs Position balance comparison with date filters.
+  4. ⚠️ **Stale Run Detector**: Instant visibility into historical runs invalidated by late trades.
+  5. ⚡ **Redis In-Memory Cache (Quarkus :8085)**: Live ticker query with sub-millisecond ($<1\text{ms}$) latency indicators.
+  6. 🛡️ **Resilience Recovery Queue**: Visual DLQ tracking buffered trades when Kafka is offline.
+* **Architecture Credits**: Designed & Engineered by **Ajay Guttedar** (Lead Systems Architect).
+
 ---
 
 ## 🔌 API Reference & Endpoints
