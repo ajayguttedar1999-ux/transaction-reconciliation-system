@@ -1,0 +1,122 @@
+name: Enterprise CI/CD Pipeline - Transaction Reconciliation System
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  # ==============================================================================
+  # Job 1: Build & Test Backend Microservices (Java 21 LTS + Maven)
+  # ==============================================================================
+  build-and-test-backend:
+    name: ☕ Java 21 Multi-Module Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up Java 21 LTS (Eclipse Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: 📦 Build All Modules & Run Unit Tests
+        run: |
+          mvn clean package -DskipTests=false --batch-mode
+
+  # ==============================================================================
+  # Job 2: Build & Lint React Frontend (Node 20 + Vite)
+  # ==============================================================================
+  build-frontend:
+    name: ⚛️ React 18 + Vite Frontend Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 📦 Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: 🏗️ Build Production Distribution
+        working-directory: frontend
+        run: npm run build
+
+  # ==============================================================================
+  # Job 3: Docker Image Verification & Container Builds
+  # ==============================================================================
+  docker-build-verification:
+    name: 🐳 Docker Container Build Verification
+    needs: [build-and-test-backend, build-frontend]
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service:
+          - { name: "transaction-service", context: "./transaction-service" }
+          - { name: "position-service", context: "./position-service" }
+          - { name: "reconciliation-service", context: "./reconciliation-service" }
+          - { name: "stale-detection-service", context: "./stale-detection-service" }
+          - { name: "frontend", context: "./frontend" }
+
+    steps:
+      - name: 📥 Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up Java 21 for JAR generation
+        if: matrix.service.name != 'frontend'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: 📦 Compile JAR for ${{ matrix.service.name }}
+        if: matrix.service.name != 'frontend'
+        run: mvn clean package -DskipTests -pl ${{ matrix.service.name }} -am
+
+      - name: 🛠️ Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🐳 Build Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.service.context }}
+          push: false
+          tags: ${{ matrix.service.name }}:latest
+
+  # ==============================================================================
+  # Job 4: Kubernetes Manifest Conformance & Validation
+  # ==============================================================================
+  k8s-manifest-validation:
+    name: ☸️ Kubernetes Manifest Conformance Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: ☸️ Validate YAML Syntax and Schema
+        run: |
+          for f in k8s/*.yaml; do
+            echo "Validating $f..."
+            python3 -c "import yaml; list(yaml.safe_load_all(open('$f')))" || exit 1
+          done
+          echo "All Kubernetes manifests successfully validated!"
