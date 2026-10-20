@@ -1,6 +1,7 @@
 # Maven build output
 target/
 *.jar
+!**/gradle/wrapper/*.jar
 *.war
 *.ear
 *.class
