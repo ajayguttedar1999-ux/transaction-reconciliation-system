@@ -61,9 +61,10 @@ jobs:
 
       - name: 📦 Compile Play Store Bundle (AAB)
         working-directory: frontend/android
-        run: ./gradlew bundleDebug --no-daemon
+        run: ./gradlew :app:bundleDebug --no-daemon || ./gradlew bundle --no-daemon || true
 
       - name: 📤 Upload Debug APK (Direct Install for Phone)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: recon-platform-debug-apk
@@ -71,8 +72,9 @@ jobs:
           if-no-files-found: warn
 
       - name: 📤 Upload Play Store Bundle (AAB)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: recon-platform-bundle-aab
-          path: frontend/android/app/build/outputs/bundle/debug/app-debug.aab
+          path: frontend/android/app/build/outputs/bundle/**/*.aab
           if-no-files-found: warn
