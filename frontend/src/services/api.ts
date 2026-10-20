@@ -5,8 +5,22 @@
 
 const getBaseHost = () => {
   if (typeof window !== 'undefined') {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const apiParam = params.get('api');
+      if (apiParam) {
+        localStorage.setItem('RECON_API_HOST', apiParam);
+        return apiParam.replace(/\/$/, '');
+      }
+    } catch (_) {}
+
     const custom = localStorage.getItem('RECON_API_HOST');
     if (custom) return custom.replace(/\/$/, '');
+
+    // Auto-detect laptop LAN/Wi-Fi IP if accessed via mobile browser over LAN
+    if (window.location.hostname && window.location.hostname !== 'localhost' && !window.location.hostname.includes('vercel.app')) {
+      return `http://${window.location.hostname}`;
+    }
   }
   return 'http://localhost';
 };
