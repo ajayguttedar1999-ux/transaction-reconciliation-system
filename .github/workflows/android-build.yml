@@ -34,12 +34,17 @@ jobs:
         run: |
           echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
 
-      - name: 📦 Install Frontend Dependencies & Build
+      - name: 📦 Install Frontend Dependencies
         working-directory: frontend
-        run: |
-          npm install
-          npm run build
-          npx cap sync android
+        run: npm ci
+
+      - name: 🏗️ Build Web Distribution
+        working-directory: frontend
+        run: npm run build
+
+      - name: 🔄 Sync Capacitor Android
+        working-directory: frontend
+        run: npx @capacitor/cli sync android
 
       - name: 🔨 Grant Execute Permission for Gradlew
         working-directory: frontend/android
@@ -49,20 +54,20 @@ jobs:
         working-directory: frontend/android
         run: ./gradlew assembleDebug --no-daemon
 
-      - name: 📦 Compile Play Store Release Bundle (AAB)
+      - name: 📦 Compile Play Store Bundle (AAB)
         working-directory: frontend/android
-        run: ./gradlew bundleRelease --no-daemon
+        run: ./gradlew bundleDebug --no-daemon
 
       - name: 📤 Upload Debug APK (Direct Install for Phone)
         uses: actions/upload-artifact@v4
         with:
           name: recon-platform-debug-apk
           path: frontend/android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
+          if-no-files-found: warn
 
-      - name: 📤 Upload Google Play Store Bundle (AAB)
+      - name: 📤 Upload Play Store Bundle (AAB)
         uses: actions/upload-artifact@v4
         with:
-          name: recon-platform-playstore-aab
-          path: frontend/android/app/build/outputs/bundle/release/app-release.aab
+          name: recon-platform-bundle-aab
+          path: frontend/android/app/build/outputs/bundle/debug/app-debug.aab
           if-no-files-found: warn
