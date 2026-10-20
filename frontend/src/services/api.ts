@@ -27,6 +27,15 @@ const getBaseHost = () => {
 
 const getUrls = () => {
   const host = getBaseHost();
+  // If host is a Cloudflare Tunnel URL, Ngrok, or unified port 8080 gateway
+  if (host.includes('.trycloudflare.com') || host.includes('.ngrok') || host.endsWith(':8080') || (host.startsWith('https://') && !host.includes('localhost'))) {
+    return {
+      TXN_SERVICE_URL: `${host}/api/v1/transactions`,
+      RECON_SERVICE_URL: `${host}/api/v1/reconciliations`,
+      STALE_SERVICE_URL: `${host}/api/v1/stale-runs`,
+      CACHE_SERVICE_URL: `${host}/api/v1/cache`,
+    };
+  }
   return {
     TXN_SERVICE_URL: `${host}:8081/api/v1/transactions`,
     RECON_SERVICE_URL: `${host}:8083/api/v1/reconciliations`,
