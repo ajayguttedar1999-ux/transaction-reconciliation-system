@@ -65,7 +65,9 @@ The system consists of **5 decoupled microservices** communicating asynchronousl
 * **Database Migrations:** Liquibase (Version-controlled XML changesets)
 * **Frontend:** React 18, Vite, TypeScript, Axios, Lucide Icons
 * **Testing:** JUnit 5, RestAssured, Mockito, Automated Postman Collection (v2.1)
-* **Containerization:** Docker & Docker Compose
+* **Containerization & Orchestration:** Docker, Docker Compose, **Kubernetes (12 Production Manifests)**
+* **Observability & Logging:** **Splunk Enterprise (Structured JSON logs, SPL Alert Queries, Distributed Tracing)**
+* **Cloud Data Warehouse:** **Snowflake (Dimensional Star Schema, Snowpipe CDC, Regulatory Views)**
 
 ---
 
@@ -80,6 +82,9 @@ recon-system/
 ├── stale-detection-service/    # Service 4: Late-trade Invalidation Detector (Spring Boot / Port 8084)
 ├── position-cache-service/     # Service 5: Reactive Low-Latency Cache (Quarkus + Redis / Port 8085)
 ├── frontend/                   # React 18 + TypeScript Dashboard (Port 3000)
+├── k8s/                        # 12 Production Kubernetes manifests (Deployments, Ingress, ConfigMaps)
+├── splunk/                     # Splunk structured JSON logging, HEC, and SPL alert queries
+├── snowflake/                  # Cloud Data Warehouse: Star Schema DDL, Snowpipe CDC, & Audit views
 ├── docker-compose.yml          # PostgreSQL 16, Kafka, Zookeeper, & Redis 7 topology
 └── Transaction_Reconciliation_System.postman_collection.json # Automated API test suite
 ```
