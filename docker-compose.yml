@@ -42,5 +42,13 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
 
+  # 4. Redis (Sub-millisecond In-Memory Cache)
+  redis:
+    image: redis:7-alpine
+    container_name: recon-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
 volumes:
   postgres_recon_data:

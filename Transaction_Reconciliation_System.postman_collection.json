@@ -91,6 +91,25 @@
           }
         }
       ]
+    },
+    {
+      "name": "5. Position Cache Service (Quarkus + Redis)",
+      "item": [
+        {
+          "name": "5.1 Get Cached Position from Redis (< 2ms)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "http://localhost:8085/api/v1/cache/positions/EQUITY-AAPL", "host": ["http://localhost:8085"], "path": ["api", "v1", "cache", "positions", "EQUITY-AAPL"] }
+          }
+        },
+        {
+          "name": "5.2 Check Quarkus Health",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "http://localhost:8085/api/v1/cache/health", "host": ["http://localhost:8085"], "path": ["api", "v1", "cache", "health"] }
+          }
+        }
+      ]
     }
   ]
 }
