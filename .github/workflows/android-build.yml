@@ -52,22 +52,17 @@ jobs:
 
       - name: 🔨 Grant Execute Permission for Gradlew
         working-directory: frontend/android
-        run: chmod +x gradlew
+        run: |
+          sed -i 's/\r$//' gradlew
+          chmod +x gradlew
 
       - name: 📱 Compile Debug APK
         working-directory: frontend/android
-        run: |
-          ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee /tmp/gradle.log || {
-            echo "### ❌ Gradle Build Failed" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            tail -n 60 /tmp/gradle.log >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            exit 1
-          }
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: 📦 Compile Play Store Bundle (AAB)
         working-directory: frontend/android
-        run: ./gradlew :app:bundleDebug --stacktrace --no-daemon || true
+        run: ./gradlew bundleDebug --no-daemon || true
 
       - name: 📤 Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
