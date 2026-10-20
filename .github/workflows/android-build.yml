@@ -56,7 +56,8 @@ jobs:
 
       - name: 📱 Compile Debug APK
         working-directory: frontend/android
-        run: ./gradlew assembleDebug --no-daemon
+        run: |
+          ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee gradle_build.log || (echo "=== GRADLE ERROR LOG ===" && tail -n 100 gradle_build.log && exit 1)
 
       - name: 📦 Compile Play Store Bundle (AAB)
         working-directory: frontend/android
