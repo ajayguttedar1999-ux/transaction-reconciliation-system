@@ -1,6 +1,6 @@
 const TXN_SERVICE_URL = 'http://localhost:8081/api/v1/transactions';
 const RECON_SERVICE_URL = 'http://localhost:8083/api/v1/reconciliations';
-const STALE_SERVICE_URL = 'http://localhost:8084/api/v1/stale/runs';
+const STALE_SERVICE_URL = 'http://localhost:8084/api/v1/stale-runs';
 const CACHE_SERVICE_URL = 'http://localhost:8085/api/v1/cache';
 
 export interface Transaction {
@@ -97,13 +97,13 @@ export const api = {
 
   async triggerReconciliation(date?: string): Promise<ReconRun> {
     const queryDate = date || new Date().toISOString().split('T')[0];
-    const res = await fetch(`${RECON_SERVICE_URL}/run?date=${queryDate}`, { method: 'POST' });
+    const res = await fetch(`${RECON_SERVICE_URL}/trigger?date=${queryDate}`, { method: 'POST' });
     if (!res.ok) throw new Error('Failed to trigger reconciliation');
     return res.json();
   },
 
   async getReconciliations(): Promise<ReconRun[]> {
-    const res = await fetch(`${RECON_SERVICE_URL}/runs`);
+    const res = await fetch(RECON_SERVICE_URL);
     if (!res.ok) throw new Error('Failed to fetch reconciliations');
     return res.json();
   },
