@@ -11,10 +11,10 @@
 ## 1. System Context & Component Interaction
 
 ```text
-                                  +------------------------------+
-                                  |   React 18 + Vite Frontend   |
-                                  |     (Port 3000 / Vercel)     |
-                                  +--------------+---------------+
+                                  +------------------------------------+
+                                  | React 18 + Capacitor Android (APK) |
+                                  |     (Port 3000 / Vercel / App)     |
+                                  +-----------------+------------------+
                                                  |
                        +-------------------------+-------------------------+
                        | HTTP (REST)                                       | HTTP (REST)

@@ -199,20 +199,21 @@ npm run dev
 ```
 Open **`http://localhost:3000`** in your browser (or use the live [Vercel Deployment](https://transaction-reconciliation-system-rho.vercel.app)).
 
-### 5. Build Native Android Mobile App (Capacitor & Play Store)
-The system includes a native Android wrapper (`frontend/android`) configured with Capacitor:
-* **Sync Web Assets & Mobile Shell:**
+### 5. Native Android Mobile App (APK & Google Play Store)
+The platform includes a native Android application wrapper (`frontend/android`) engineered with Capacitor and compiled via automated cloud CI/CD:
+* **Package ID:** `com.ajay.reconplatform`
+* **Target Runtime:** Android 14+ (API Level 34) &bull; Edge-to-Edge Responsive Dark Theme
+* **Continuous Cloud Compilation:** Every GitHub push automatically compiles both distribution binaries:
+  * 📱 **Direct Device APK (`recon-platform-debug-apk`):** Download directly from the [GitHub Actions Artifacts](https://github.com/ajayguttedar1999-ux/transaction-reconciliation-system/actions/workflows/android-build.yml) or [Releases](https://github.com/ajayguttedar1999-ux/transaction-reconciliation-system/releases/tag/mobile-latest) to install and run immediately on any Android phone.
+  * 📦 **Google Play Bundle (`recon-platform-bundle-aab`):** Download to upload directly to the [Google Play Console](https://play.google.com/console) to publish on the Play Store.
+
+* **Local Android Studio Workflow:**
   ```bash
   cd frontend
-  npm run cap:sync
+  npm run cap:sync     # Syncs web assets to android/app/src/main/assets/public
+  npm run cap:open     # Launches Android Studio directly
   ```
-* **Open in Android Studio:**
-  ```bash
-  npm run cap:open
-  ```
-  From Android Studio: select **Build > Build Bundle(s) / APK(s) > Build APK(s)** for direct device testing, or **Generate Signed Bundle / APK** (`.aab`) to publish to the **Google Play Store**.
-* **Cloud CI/CD Automated Build:**
-  The [Android Mobile Build](https://github.com/ajayguttedar1999-ux/transaction-reconciliation-system/actions/workflows/android-build.yml) GitHub Actions workflow automatically compiles both `app-debug.apk` and `app-release.aab` on every push!
+  From Android Studio: select **Build > Build Bundle(s) / APK(s) > Build APK(s)** for immediate USB debugging or local testing.
 
 ---
 

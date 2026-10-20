@@ -48,7 +48,7 @@ The **Transaction Reconciliation System** provides an event-driven, fault-tolera
 ```text
                                   +-------------------------------------------------------------+
                                   |                     USERS & EXTERNAL CLIENTS                |
-                                  |   [ React 18 UI on Vercel ]    [ Algo Desks / Risk APIs ]   |
+                                  |   [ React 18 Web & Android APK ]    [ Algo Desks / Risk APIs ]    |
                                   +------------------------------+------------------------------+
                                                                  | HTTPS (TLS 1.3)
                                                                  v
