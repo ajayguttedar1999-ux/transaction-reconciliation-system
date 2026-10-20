@@ -69,21 +69,17 @@ jobs:
         working-directory: frontend/android
         run: ./gradlew :app:bundleDebug --stacktrace --no-daemon || true
 
-      - name: 🔍 Find Generated Android Binaries
-        run: |
-          find frontend/android/app/build -name "*.apk" -o -name "*.aab"
-
       - name: 📤 Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: recon-platform-debug-apk
-          path: frontend/android/app/build/outputs/apk/**/*.apk
+          path: frontend/android/app/build/outputs/apk/debug/app-debug.apk
 
       - name: 📤 Upload Play Store Bundle Artifact
         uses: actions/upload-artifact@v4
         with:
           name: recon-platform-bundle-aab
-          path: frontend/android/app/build/outputs/bundle/**/*.aab
+          path: frontend/android/app/build/outputs/bundle/debug/app-debug.aab
           if-no-files-found: warn
 
       - name: 🚀 Publish Direct Download Release
