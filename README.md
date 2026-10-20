@@ -1,5 +1,12 @@
 # Transaction Reconciliation Demo System
 
+[![CI/CD Pipeline](https://github.com/ajayguttedar1999-ux/transaction-reconciliation-system/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/ajayguttedar1999-ux/transaction-reconciliation-system/actions/workflows/ci-cd.yml)
+![Java 21](https://img.shields.io/badge/Java-21%20LTS-orange.svg)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-brightgreen.svg)
+![Quarkus](https://img.shields.io/badge/Quarkus-3.15.1-blue.svg)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-326CE5.svg)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 An enterprise-grade, event-driven financial transaction processing, reconciliation, and low-latency cache system modeled after modern banking platforms (e.g., Fiserv Vision Next / Helix architecture).
 
 ---
