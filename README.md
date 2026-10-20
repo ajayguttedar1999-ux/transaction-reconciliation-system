@@ -168,5 +168,50 @@ Open **`http://localhost:3000`** in your browser.
 
 ---
 
+## ☸️ Kubernetes (K8s) Deployment
+
+The entire system is cloud-ready and can be deployed to any Kubernetes cluster (Minikube, Docker Desktop K8s, EKS, GKE, or AKS) using the production manifests in the `k8s/` directory.
+
+### 1. Build Docker Images
+```bash
+# Build backend JARs
+mvn clean package -DskipTests
+
+# Build Docker images
+docker build -t transaction-service:latest transaction-service/
+docker build -t position-service:latest position-service/
+docker build -t reconciliation-service:latest reconciliation-service/
+docker build -t stale-detection-service:latest stale-detection-service/
+docker build -t position-cache-service:latest position-cache-service/
+docker build -t recon-frontend:latest frontend/
+```
+
+### 2. Deploy to Kubernetes
+```bash
+# Apply namespace, config, secrets, and infrastructure
+kubectl apply -f k8s/00-namespace.yaml
+kubectl apply -f k8s/01-configmap-secrets.yaml
+kubectl apply -f k8s/02-postgres.yaml
+kubectl apply -f k8s/03-kafka.yaml
+kubectl apply -f k8s/04-redis.yaml
+
+# Deploy microservices & frontend
+kubectl apply -f k8s/05-transaction-service.yaml
+kubectl apply -f k8s/06-position-service.yaml
+kubectl apply -f k8s/07-reconciliation-service.yaml
+kubectl apply -f k8s/08-stale-detection-service.yaml
+kubectl apply -f k8s/09-position-cache-service.yaml
+kubectl apply -f k8s/10-frontend.yaml
+kubectl apply -f k8s/11-ingress.yaml
+```
+
+### 3. Verify Deployment
+```bash
+kubectl get pods -n recon-system
+kubectl get svc -n recon-system
+```
+
+---
+
 ## 📄 License
 This project is licensed under the MIT License.
