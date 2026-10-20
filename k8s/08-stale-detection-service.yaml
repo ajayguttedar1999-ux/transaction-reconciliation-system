@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stale-detection-service
+  namespace: recon-system
+  labels:
+    app: stale-detection-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stale-detection-service
+  template:
+    metadata:
+      labels:
+        app: stale-detection-service
+    spec:
+      containers:
+        - name: stale-detection-service
+          image: stale-detection-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8084
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://recon-postgres:5432/recon_db"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: recon-secrets
+                  key: DB_USERNAME
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: recon-secrets
+                  key: DB_PASSWORD
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: recon-config
+                  key: KAFKA_BOOTSTRAP_SERVERS
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stale-detection-service
+  namespace: recon-system
+spec:
+  selector:
+    app: stale-detection-service
+  ports:
+    - port: 8084
+      targetPort: 8084

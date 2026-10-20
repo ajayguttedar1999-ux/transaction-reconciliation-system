@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: recon-system
+  labels:
+    app.kubernetes.io/name: recon-system
+    app.kubernetes.io/part-of: transaction-reconciliation-platform
