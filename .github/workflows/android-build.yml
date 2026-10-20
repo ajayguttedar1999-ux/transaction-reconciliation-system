@@ -58,14 +58,7 @@ jobs:
 
       - name: 📱 Compile Debug APK
         working-directory: frontend/android
-        run: |
-          ./gradlew assembleDebug --stacktrace --no-daemon > gradle.log 2>&1 || STATUS=$?
-          if [ "${STATUS:-0}" -ne 0 ]; then
-            ERR_MSG=$(tail -n 25 gradle.log | sed ':a;N;$!ba;s/\n/%0A/g')
-            echo "::error title=Gradle Error::$ERR_MSG"
-            cat gradle.log
-            exit $STATUS
-          fi
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: 📦 Compile Play Store Bundle (AAB)
         working-directory: frontend/android
