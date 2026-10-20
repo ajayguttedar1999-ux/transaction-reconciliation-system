@@ -6,8 +6,10 @@
 ![Quarkus](https://img.shields.io/badge/Quarkus-3.15.1-blue.svg)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-326CE5.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+[![LLD Spec](https://img.shields.io/badge/Architecture-LLD%20Document-purple.svg)](./LLD.md)
 
-An enterprise-grade, event-driven financial transaction processing, reconciliation, and low-latency cache system modeled after modern banking platforms (e.g., Fiserv Vision Next / Helix architecture).
+An enterprise-grade, event-driven financial transaction processing, reconciliation, and low-latency cache system modeled after modern banking platforms (e.g., Fiserv Vision Next / Helix architecture).  
+👉 **Read the complete [Low-Level Design (LLD) Specification](./LLD.md)**.
 
 ---
 
