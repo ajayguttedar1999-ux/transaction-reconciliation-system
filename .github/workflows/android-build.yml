@@ -30,9 +30,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: 🤖 Set Android SDK Environment
+      - name: 🤖 Set Android SDK Environment & Install API 34
         run: |
           echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
       - name: 📦 Install Frontend Dependencies
         working-directory: frontend
