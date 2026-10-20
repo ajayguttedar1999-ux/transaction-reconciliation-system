@@ -63,14 +63,28 @@ export interface RecoveryItem {
 
 export const api = {
   async createTransaction(payload: CreateTransactionPayload): Promise<Transaction> {
+    const formattedPayload = {
+      ...payload,
+      tradeDate: payload.tradeDate.includes('T')
+        ? payload.tradeDate
+        : new Date(payload.tradeDate + 'T00:00:00Z').toISOString()
+    };
+
     const res = await fetch(TXN_SERVICE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(formattedPayload),
     });
+
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || 'Failed to create transaction');
+      let errMsg = err.message;
+      if (err.errors) {
+        errMsg = Object.entries(err.errors)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join(', ');
+      }
+      throw new Error(errMsg || err.error || 'Failed to create transaction');
     }
     return res.json();
   },
