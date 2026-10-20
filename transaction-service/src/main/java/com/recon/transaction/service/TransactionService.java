@@ -23,14 +23,17 @@ public class TransactionService {
     private final TransactionRepository repository;
     private final TransactionEventProducer producer;
     private final com.recon.transaction.repository.RecoveryTransactionQueueRepository recoveryRepository;
+    private final com.recon.transaction.metrics.TransactionMetrics metrics;
 
     public TransactionService(
             TransactionRepository repository,
             TransactionEventProducer producer,
-            com.recon.transaction.repository.RecoveryTransactionQueueRepository recoveryRepository) {
+            com.recon.transaction.repository.RecoveryTransactionQueueRepository recoveryRepository,
+            com.recon.transaction.metrics.TransactionMetrics metrics) {
         this.repository = repository;
         this.producer = producer;
         this.recoveryRepository = recoveryRepository;
+        this.metrics = metrics;
     }
 
     @Transactional(readOnly = true)
@@ -57,6 +60,7 @@ public class TransactionService {
 
         TransactionEntity saved = repository.save(entity);
         log.info("Transaction saved: id={}, txnId={}", saved.getId(), saved.getTransactionId());
+        metrics.incrementTradeCount(saved.getProductId());
 
         TransactionBookedEvent event = new TransactionBookedEvent(
                 UUID.randomUUID().toString(),

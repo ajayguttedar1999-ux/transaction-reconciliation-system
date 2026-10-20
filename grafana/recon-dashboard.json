@@ -1,0 +1,82 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 0 },
+      "id": 1,
+      "title": "⚡ Live Transactions Booked Rate",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "rate(recon_transactions_booked_total[1m])",
+          "legendFormat": "{{product}}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 0 },
+      "id": 2,
+      "title": "☕ JVM Active Heap Memory (MB)",
+      "type": "gauge",
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes{area=\"heap\"} / 1024 / 1024",
+          "legendFormat": "{{application}}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 0 },
+      "id": 3,
+      "title": "🔥 CPU Usage (%)",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "system_cpu_usage * 100",
+          "legendFormat": "{{application}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 6 },
+      "id": 4,
+      "title": "📈 Cumulative Financial Transactions by Product",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "recon_transactions_booked_total",
+          "legendFormat": "{{product}}",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["recon", "fintech", "banking"],
+  "time": { "from": "now-15m", "to": "now" },
+  "title": "Transaction Reconciliation System - Live Metrics Dashboard",
+  "uid": "recon-metrics-001"
+}

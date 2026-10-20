@@ -74,6 +74,7 @@ The system consists of **5 decoupled microservices** communicating asynchronousl
 * **Testing:** JUnit 5, RestAssured, Mockito, Automated Postman Collection (v2.1)
 * **Containerization & Orchestration:** Docker, Docker Compose, **Kubernetes (12 Production Manifests)**
 * **Observability & Logging:** **Splunk Enterprise (Structured JSON logs, SPL Alert Queries, Distributed Tracing)**
+* **Metrics & Dashboards:** **Prometheus & Grafana (Custom financial counters, JVM heap, CPU telemetry)**
 * **Cloud Data Warehouse:** **Snowflake (Dimensional Star Schema, Snowpipe CDC, Regulatory Views)**
 
 ---
@@ -91,6 +92,7 @@ recon-system/
 ├── frontend/                   # React 18 + TypeScript Dashboard (Port 3000)
 ├── k8s/                        # 12 Production Kubernetes manifests (Deployments, Ingress, ConfigMaps)
 ├── splunk/                     # Splunk structured JSON logging, HEC, and SPL alert queries
+├── grafana/                    # Prometheus scrape config & ready-to-import Grafana dashboard
 ├── snowflake/                  # Cloud Data Warehouse: Star Schema DDL, Snowpipe CDC, & Audit views
 ├── docker-compose.yml          # PostgreSQL 16, Kafka, Zookeeper, & Redis 7 topology
 └── Transaction_Reconciliation_System.postman_collection.json # Automated API test suite
