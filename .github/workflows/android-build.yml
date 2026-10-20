@@ -44,7 +44,9 @@ jobs:
 
       - name: 🔄 Copy Web Assets into Android
         working-directory: frontend
-        run: npx --yes @capacitor/cli copy android
+        run: |
+          mkdir -p android/app/src/main/assets/public
+          cp -r dist/* android/app/src/main/assets/public/
 
       - name: 🔨 Grant Execute Permission for Gradlew
         working-directory: frontend/android
