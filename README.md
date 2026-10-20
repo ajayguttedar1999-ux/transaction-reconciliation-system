@@ -1,6 +1,7 @@
 # Transaction Reconciliation Demo System
 
 [![CI/CD Pipeline](https://github.com/ajayguttedar1999-ux/transaction-reconciliation-system/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/ajayguttedar1999-ux/transaction-reconciliation-system/actions/workflows/ci-cd.yml)
+[![Android Mobile Build](https://github.com/ajayguttedar1999-ux/transaction-reconciliation-system/actions/workflows/android-build.yml/badge.svg)](https://github.com/ajayguttedar1999-ux/transaction-reconciliation-system/actions/workflows/android-build.yml)
 [![HLD Spec](https://img.shields.io/badge/Architecture-High--Level%20Design%20(HLD)-blue.svg)](./HLD.md)
 [![LLD Spec](https://img.shields.io/badge/Architecture-Low--Level%20Design%20(LLD)-purple.svg)](./LLD.md)
 ![Java 21](https://img.shields.io/badge/Java-21%20LTS-orange.svg)
@@ -197,6 +198,21 @@ npm install
 npm run dev
 ```
 Open **`http://localhost:3000`** in your browser (or use the live [Vercel Deployment](https://transaction-reconciliation-system-rho.vercel.app)).
+
+### 5. Build Native Android Mobile App (Capacitor & Play Store)
+The system includes a native Android wrapper (`frontend/android`) configured with Capacitor:
+* **Sync Web Assets & Mobile Shell:**
+  ```bash
+  cd frontend
+  npm run cap:sync
+  ```
+* **Open in Android Studio:**
+  ```bash
+  npm run cap:open
+  ```
+  From Android Studio: select **Build > Build Bundle(s) / APK(s) > Build APK(s)** for direct device testing, or **Generate Signed Bundle / APK** (`.aab`) to publish to the **Google Play Store**.
+* **Cloud CI/CD Automated Build:**
+  The [Android Mobile Build](https://github.com/ajayguttedar1999-ux/transaction-reconciliation-system/actions/workflows/android-build.yml) GitHub Actions workflow automatically compiles both `app-debug.apk` and `app-release.aab` on every push!
 
 ---
 
