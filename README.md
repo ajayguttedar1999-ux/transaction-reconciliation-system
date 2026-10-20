@@ -1,14 +1,14 @@
 # Transaction Reconciliation Demo System
 
-An enterprise-grade, event-driven financial transaction processing and reconciliation system modeled after modern banking platforms (e.g., Fiserv Vision Next / Helix architecture).
+An enterprise-grade, event-driven financial transaction processing, reconciliation, and low-latency cache system modeled after modern banking platforms (e.g., Fiserv Vision Next / Helix architecture).
 
 ---
 
 ## 🏛️ Architecture Overview
 
-The system consists of **4 decoupled microservices** communicating asynchronously via **Apache Kafka** and backed by **PostgreSQL** with **Liquibase** migrations:
+The system consists of **5 decoupled microservices** communicating asynchronously via **Apache Kafka**, backed by **PostgreSQL** with **Liquibase** migrations, and cached in **Redis** via a **Quarkus** reactive projection layer:
 
-```
+```text
                                   [ REACT UI (Vite / Port 3000) ]
                                                 │
                           HTTP POST /transactions  │  HTTP GET /reconciliations
@@ -34,25 +34,20 @@ The system consists of **4 decoupled microservices** communicating asynchronousl
                                    │                         │
                                    ▼                         ▼
                    [ PostgreSQL: position_capture ]      [ Kafka: position-created-topic ]
-                                                             │
-                                                             ▼
-                   ┌─────────────────────────────────────────────────────────┐
-                   │    SERVICE 3: RECONCILIATION SERVICE (Port 8083)        │
-                   │    - Aggregates Sum(Transactions) vs Position Quantity  │
-                   │    - Evaluates: BALANCED (0 discrepancy) or IMBALANCED  │
-                   │    - Stores audit runs & line-item results              │
-                   │    - Publishes: ReconciliationCompletedEvent            │
-                   └───────────────┬─────────────────────────────────────────┘
-                                   │
-                                   ▼
-                   [ PostgreSQL: recon_run & recon_balance_result ]
-                                   │
-                   ┌───────────────┴─────────────────────────────────────────┐
-                   │    SERVICE 4: STALE DETECTION SERVICE (Port 8084)       │
-                   │    - Detects late-arriving transactions                 │
-                   │    - Marks existing recon runs as is_stale = TRUE       │
-                   │    - Publishes: StalenessDetectedEvent                  │
-                   └─────────────────────────────────────────────────────────┘
+                                   │                         │
+                 ┌─────────────────┘                         ├─────────────────────────────────────────┐
+                 │                                           │                                         │
+                 ▼                                           ▼                                         ▼
+┌─────────────────────────────────────────┐ ┌─────────────────────────────────────────┐ ┌─────────────────────────────────────────┐
+│    SERVICE 3: RECON SERVICE (Port 8083) │ │  SERVICE 4: STALE DETECTOR (Port 8084)  │ │  SERVICE 5: CACHE SERVICE (Port 8085)   │
+│    - Sum(Transactions) vs Position Qty  │ │  - Detects late-arriving transactions   │ │  - Quarkus 3.15 + SmallRye Reactive   │
+│    - Status: BALANCED or IMBALANCED     │ │  - Marks runs as is_stale = TRUE        │ │  - Low-latency in-memory sync to Redis│
+│    - Stores audit runs & item results   │ │  - Publishes: StalenessDetectedEvent    │ │  - Sub-millisecond Read API (< 1ms)   │
+│    - Publishes: ReconCompletedEvent     │ └─────────────────────────────────────────┘ └───────────────────┬─────────────────────┘
+└────────────────┬────────────────────────┘                                                                 │
+                 │                                                                                           ▼
+                 ▼                                                                                  [ In-Memory Redis 7 ]
+ [ PostgreSQL: recon_run & recon_balance_result ]                                                   (Key: pos:{productId})
 ```
 
 ---
@@ -60,13 +55,16 @@ The system consists of **4 decoupled microservices** communicating asynchronousl
 ## 🛠️ Technology Stack
 
 * **Language & Runtimes:** Java 21 LTS, TypeScript, Node.js
-* **Framework:** Spring Boot 3.3.4
-* **Build System:** Apache Maven (Multi-Module)
-* **Messaging & Event Streaming:** Apache Kafka, Zookeeper
-* **Database & Persistence:** PostgreSQL 16, Spring Data JPA, Hibernate ORM
-* **Database Migrations:** Liquibase (Version-controlled changesets)
-* **Frontend:** React 18, Vite, TypeScript
-* **Testing:** JUnit 5, Mockito, Automated Postman Collection (v2.1)
+* **Backend Frameworks:**
+  * **Spring Boot 3.3.4** (Services 1, 2, 3, 4)
+  * **Quarkus 3.15.1** (Service 5: Lightweight Reactive Microservice)
+* **Build System:** Apache Maven (Multi-Module with 6 modules)
+* **Messaging & Event Streaming:** Apache Kafka 7.5 (Confluent), SmallRye Reactive Messaging (Vert.x)
+* **In-Memory Caching:** Redis 7 (Alpine), Quarkus Redis Client
+* **Database & Persistence:** PostgreSQL 16 (Alpine), Spring Data JPA, Hibernate ORM
+* **Database Migrations:** Liquibase (Version-controlled XML changesets)
+* **Frontend:** React 18, Vite, TypeScript, Axios, Lucide Icons
+* **Testing:** JUnit 5, RestAssured, Mockito, Automated Postman Collection (v2.1)
 * **Containerization:** Docker & Docker Compose
 
 ---
@@ -74,13 +72,15 @@ The system consists of **4 decoupled microservices** communicating asynchronousl
 ## 📂 Project Structure
 
 ```text
-├── common-dto/                 # Shared Java records for Kafka event schemas
-├── transaction-service/        # Service 1: Trade Ingestion (Port 8081)
-├── position-service/           # Service 2: Position Aggregator (Port 8082)
-├── reconciliation-service/     # Service 3: Reconciliation Engine (Port 8083)
-├── stale-detection-service/    # Service 4: Late-trade Invalidation Detector (Port 8084)
-├── frontend/                   # React + TypeScript Dashboard (Port 3000)
-├── docker-compose.yml          # PostgreSQL & Kafka container topology
+recon-system/
+├── common-dto/                 # Shared Java 21 records for Kafka event schemas
+├── transaction-service/        # Service 1: Trade Ingestion (Spring Boot / Port 8081)
+├── position-service/           # Service 2: Position Aggregator (Spring Boot / Port 8082)
+├── reconciliation-service/     # Service 3: Reconciliation Engine (Spring Boot / Port 8083)
+├── stale-detection-service/    # Service 4: Late-trade Invalidation Detector (Spring Boot / Port 8084)
+├── position-cache-service/     # Service 5: Reactive Low-Latency Cache (Quarkus + Redis / Port 8085)
+├── frontend/                   # React 18 + TypeScript Dashboard (Port 3000)
+├── docker-compose.yml          # PostgreSQL 16, Kafka, Zookeeper, & Redis 7 topology
 └── Transaction_Reconciliation_System.postman_collection.json # Automated API test suite
 ```
 
@@ -88,22 +88,30 @@ The system consists of **4 decoupled microservices** communicating asynchronousl
 
 ## 🚀 Quick Start Guide
 
-### 1. Start Infrastructure (PostgreSQL & Kafka)
+### 1. Start Infrastructure (PostgreSQL, Kafka, Redis)
 ```bash
 docker compose up -d
 ```
-* **PostgreSQL:** `localhost:5433` (DB: `recon_db`, User: `recon_user`, Pass: `recon_password`)
+Verified Running Containers:
+* **PostgreSQL 16:** `localhost:5433` (`recon_db` / `recon_user` / `recon_password`)
 * **Kafka Broker:** `localhost:9092`
 * **Zookeeper:** `localhost:2181`
+* **Redis 7:** `localhost:6379`
 
-### 2. Run Backend Services (in IntelliJ or Terminal)
-Run each Spring Boot application:
-* `com.recon.transaction.TransactionServiceApplication` (Port 8081)
-* `com.recon.position.PositionServiceApplication` (Port 8082)
-* `com.recon.reconciliation.ReconciliationServiceApplication` (Port 8083)
-* `com.recon.stale.StaleDetectionServiceApplication` (Port 8084)
+### 2. Build All Modules
+```bash
+mvn clean install -DskipTests
+```
 
-### 3. Run Frontend
+### 3. Run Backend Services (in IntelliJ IDEA or Terminal)
+Run each service:
+* **Service 1:** `com.recon.transaction.TransactionServiceApplication` (Port 8081)
+* **Service 2:** `com.recon.position.PositionServiceApplication` (Port 8082)
+* **Service 3:** `com.recon.reconciliation.ReconciliationServiceApplication` (Port 8083)
+* **Service 4:** `com.recon.stale.StaleDetectionServiceApplication` (Port 8084)
+* **Service 5 (Quarkus):** In IntelliJ Maven panel $\to$ `Position Cache Service` $\to$ `Plugins` $\to$ `quarkus` $\to$ `quarkus:dev` (Port 8085)
+
+### 4. Run Frontend Dashboard
 ```bash
 cd frontend
 npm install
@@ -113,11 +121,50 @@ Open **`http://localhost:3000`** in your browser.
 
 ---
 
+## 🔌 API Reference & Endpoints
+
+### Service 1: Transaction Service (`:8081`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/v1/transactions` | Ingests new financial trade/transaction |
+| `GET` | `/api/v1/transactions` | Retrieves all booked transactions |
+
+### Service 2: Position Service (`:8082`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/v1/positions` | Lists all aggregated positions from DB |
+| `GET` | `/api/v1/positions/{productId}` | Retrieves live aggregated holding for a product |
+
+### Service 3: Reconciliation Service (`:8083`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/v1/reconciliations/run?date=YYYY-MM-DD` | Triggers a reconciliation run for a trade date |
+| `GET` | `/api/v1/reconciliations/runs` | Lists historical reconciliation audit runs |
+| `GET` | `/api/v1/reconciliations/runs/{runId}` | Line-item balanced/imbalanced discrepancy breakdown |
+
+### Service 4: Stale Detection Service (`:8084`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/v1/stale/runs` | Queries reconciliation runs marked invalid/stale by late trades |
+
+### Service 5: Position Cache Service (`:8085` - Quarkus + Redis)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/v1/cache/health` | Quarkus & SmallRye health status |
+| `GET` | `/api/v1/cache/positions/{productId}` | Ultra-fast ($<1\text{ms}$) in-memory position query from Redis |
+
+---
+
 ## 🧪 Testing with Postman
 
 1. Open Postman Desktop.
 2. Click **Import** $\to$ Select `Transaction_Reconciliation_System.postman_collection.json`.
-3. Execute the pre-configured sequential requests to simulate booking trades, checking positions, running reconciliations, and detecting stale states.
+3. Execute the requests sequentially:
+   - **Step 1:** Book Transaction (`EQUITY-AAPL`, `BUY`, Qty `100`, Price `180.50`).
+   - **Step 2:** View Position Aggregation.
+   - **Step 3:** Query Redis Cache on `:8085` to see immediate sub-millisecond sync.
+   - **Step 4:** Run Reconciliation (`POST /run?date=YYYY-MM-DD`) $\to$ Status `BALANCED`.
+   - **Step 5:** Inject late trade $\to$ Verify run marked `is_stale=true`.
 
 ---
 

@@ -11,6 +11,7 @@ target/
 *.iws
 *.ipr
 out/
+mvn-idea-exec*
 
 # VS Code
 .vscode/
