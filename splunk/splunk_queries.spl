@@ -1,0 +1,43 @@
+# ==============================================================================
+# Splunk Enterprise Queries (SPL) - Transaction Reconciliation Platform
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Real-Time Discrepancy Alert (P1 High-Severity Alert)
+# Purpose: Triggers when the reconciliation service detects an IMBALANCED run
+# ------------------------------------------------------------------------------
+index=recon_logs service="reconciliation-service" level="WARN" "DISCREPANCY"
+| stats count by runId, productId, discrepancyQty, status
+| search discrepancyQty > 0
+| eval alert_level="CRITICAL", message="Reconciliation discrepancy detected! Immediate investigation required."
+
+# ------------------------------------------------------------------------------
+# 2. End-to-End Trade Lifecycle Tracing via Trace ID
+# Purpose: Given a traceId or transactionId, trace the trade across all 5 services:
+#          transaction-service -> position-service -> recon-service -> quarkus-cache
+# ------------------------------------------------------------------------------
+index=recon_logs traceId="c8a14b0b-7892-4f1a-b024-9182374619a0"
+| sort @timestamp
+| table @timestamp, service, level, traceId, message
+
+# ------------------------------------------------------------------------------
+# 3. Hourly Reconciliation Health Dashboard (Executive Summary)
+# Purpose: Visualizes Matched vs Discrepant runs over the last 24 hours
+# ------------------------------------------------------------------------------
+index=recon_logs service="reconciliation-service" "Reconciliation run completed"
+| timechart span=1h count by status
+
+# ------------------------------------------------------------------------------
+# 4. Late-Trade Invalidation & Staleness Monitor
+# Purpose: Alerts when a stale detection event invalidates a previously closed run
+# ------------------------------------------------------------------------------
+index=recon_logs service="stale-detection-service" "is_stale=true"
+| table @timestamp, runId, staleTradeId, message
+
+# ------------------------------------------------------------------------------
+# 5. Low-Latency Cache Miss & Error Rate (Quarkus + Redis)
+# Purpose: Monitors Redis cache response times and cache hit/miss ratio
+# ------------------------------------------------------------------------------
+index=recon_logs service="position-cache-service"
+| stats count(eval(status=200)) as cache_hits, count(eval(status=404)) as cache_misses by productId
+| eval hit_ratio = round((cache_hits / (cache_hits + cache_misses)) * 100, 2)
