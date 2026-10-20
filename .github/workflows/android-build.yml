@@ -58,7 +58,16 @@ jobs:
 
       - name: 📱 Compile Debug APK
         working-directory: frontend/android
-        run: ./gradlew assembleDebug --no-daemon
+        run: |
+          ./gradlew assembleDebug --stacktrace --no-daemon > gradle.log 2>&1 || STATUS=$?
+          cat gradle.log
+          if [ "${STATUS:-0}" -ne 0 ]; then
+            echo "### ❌ Gradle Build Failed (Exit Code: $STATUS)" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 80 gradle.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit $STATUS
+          fi
 
       - name: 📦 Compile Play Store Bundle (AAB)
         working-directory: frontend/android
