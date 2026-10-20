@@ -36,6 +36,24 @@ app:
     topics:
       transaction-booked: transaction-booked-topic
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      kafkaProducer:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10000ms
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+  retry:
+    instances:
+      kafkaProducer:
+        max-attempts: 3
+        wait-duration: 500ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+
 logging:
   level:
     com.recon: DEBUG

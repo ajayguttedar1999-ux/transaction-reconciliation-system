@@ -31,10 +31,16 @@
         <quarkus.platform.version>3.15.1</quarkus.platform.version>
         <liquibase.version>4.27.0</liquibase.version>
         <postgresql.version>42.7.3</postgresql.version>
+        <resilience4j.version>2.2.0</resilience4j.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-spring-boot3</artifactId>
+                <version>${resilience4j.version}</version>
+            </dependency>
             <dependency>
                 <groupId>io.quarkus.platform</groupId>
                 <artifactId>quarkus-bom</artifactId>

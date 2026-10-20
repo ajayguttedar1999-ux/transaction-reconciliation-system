@@ -32,4 +32,9 @@ public class TransactionController {
     public ResponseEntity<List<TransactionResponse>> getAllTransactions() {
         return ResponseEntity.ok(transactionService.getAllTransactions());
     }
+
+    @GetMapping("/recovery-queue")
+    public ResponseEntity<?> getRecoveryQueue() {
+        return ResponseEntity.ok(transactionService.getPendingRecoveryItems());
+    }
 }

@@ -22,10 +22,20 @@ public class TransactionService {
 
     private final TransactionRepository repository;
     private final TransactionEventProducer producer;
+    private final com.recon.transaction.repository.RecoveryTransactionQueueRepository recoveryRepository;
 
-    public TransactionService(TransactionRepository repository, TransactionEventProducer producer) {
+    public TransactionService(
+            TransactionRepository repository,
+            TransactionEventProducer producer,
+            com.recon.transaction.repository.RecoveryTransactionQueueRepository recoveryRepository) {
         this.repository = repository;
         this.producer = producer;
+        this.recoveryRepository = recoveryRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public List<com.recon.transaction.entity.RecoveryTransactionQueue> getPendingRecoveryItems() {
+        return recoveryRepository.findByStatus("PENDING_RETRY");
     }
 
     @Transactional

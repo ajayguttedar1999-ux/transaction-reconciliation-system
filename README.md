@@ -138,8 +138,9 @@ Open **`http://localhost:3000`** in your browser.
 ### Service 1: Transaction Service (`:8081`)
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| `POST` | `/api/v1/transactions` | Ingests new financial trade/transaction |
+| `POST` | `/api/v1/transactions` | Ingests new financial trade/transaction (with Circuit Breaker & Retry) |
 | `GET` | `/api/v1/transactions` | Retrieves all booked transactions |
+| `GET` | `/api/v1/transactions/recovery-queue` | Inspects transactions safely buffered during Kafka blips |
 
 ### Service 2: Position Service (`:8082`)
 | Method | Endpoint | Description |
@@ -222,6 +223,38 @@ kubectl apply -f k8s/11-ingress.yaml
 kubectl get pods -n recon-system
 kubectl get svc -n recon-system
 ```
+
+---
+
+## 🛡️ Fault Tolerance & Circuit Breaking (Resilience4j)
+
+To guarantee **zero lost trades** in enterprise environments where Kafka brokers or downstream networks experience temporary outages, `transaction-service` is fortified with **Resilience4j**:
+
+```text
+[ Trade Request ]
+       │
+       ▼
+ [ Save to PostgreSQL (ACID) ]
+       │
+       ▼
+ [ Kafka Event Producer ]
+       │
+       ├── (Success) ───────────────────────────> [ Kafka: transaction-booked-topic ]
+       │
+       └── (Kafka Down / 50% Failure Rate)
+               │
+               ▼ (Circuit Breaker TRIPS OPEN)
+       [ Fallback Method Activated ]
+               │
+               ▼
+       [ Buffer to Local DLQ: transaction_recovery_queue ]
+       (Guarantees 0% trade loss; ready for automatic offline replay)
+```
+
+### Configured Policies:
+* **Circuit Breaker**: Sliding window of 10 calls, 50% failure rate threshold, 10s wait in OPEN state before testing HALF-OPEN state.
+* **Automatic Retry**: 3 attempts with exponential backoff multiplier (500ms $\to$ 1000ms $\to$ 2000ms).
+* **Dead-Letter Queue (DLQ)**: Accessible via `GET /api/v1/transactions/recovery-queue`.
 
 ---
 
