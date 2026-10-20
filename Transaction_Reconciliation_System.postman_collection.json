@@ -1,0 +1,96 @@
+{
+  "info": {
+    "_postman_id": "9a38f7e4-2391-4c63-b8d1-1e987c2b3a91",
+    "name": "Transaction Reconciliation System",
+    "description": "End-to-End API Test Collection for Enterprise Financial Reconciliation Demo System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "txn_base_url", "value": "http://localhost:8081/api/v1", "type": "string" },
+    { "key": "pos_base_url", "value": "http://localhost:8082/api/v1", "type": "string" },
+    { "key": "recon_base_url", "value": "http://localhost:8083/api/v1", "type": "string" },
+    { "key": "stale_base_url", "value": "http://localhost:8084/api/v1", "type": "string" },
+    { "key": "last_run_id", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Transaction Service",
+      "item": [
+        {
+          "name": "1.1 Book Trade - AAPL",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transactionId\": \"TXN-AAPL-{{$timestamp}}\",\n  \"productId\": \"EQUITY-AAPL\",\n  \"accountId\": \"ACC-1001\",\n  \"quantity\": 150.0000,\n  \"price\": 182.5000,\n  \"currency\": \"USD\",\n  \"tradeDate\": \"2026-10-20T10:00:00Z\"\n}"
+            },
+            "url": { "raw": "{{txn_base_url}}/transactions", "host": ["{{txn_base_url}}"], "path": ["transactions"] }
+          }
+        },
+        {
+          "name": "1.2 Book Trade - IBM",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transactionId\": \"TXN-IBM-{{$timestamp}}\",\n  \"productId\": \"EQUITY-IBM\",\n  \"accountId\": \"ACC-2002\",\n  \"quantity\": 300.0000,\n  \"price\": 145.0000,\n  \"currency\": \"USD\",\n  \"tradeDate\": \"2026-10-20T10:15:00Z\"\n}"
+            },
+            "url": { "raw": "{{txn_base_url}}/transactions", "host": ["{{txn_base_url}}"], "path": ["transactions"] }
+          }
+        },
+        {
+          "name": "1.3 List All Transactions",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{txn_base_url}}/transactions", "host": ["{{txn_base_url}}"], "path": ["transactions"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Position Service",
+      "item": [
+        {
+          "name": "2.1 List All Calculated Positions",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{pos_base_url}}/positions", "host": ["{{pos_base_url}}"], "path": ["positions"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Reconciliation Service",
+      "item": [
+        {
+          "name": "3.1 Trigger Manual Reconciliation",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{recon_base_url}}/reconciliations/trigger", "host": ["{{recon_base_url}}"], "path": ["reconciliations", "trigger"] }
+          }
+        },
+        {
+          "name": "3.2 List All Reconciliation Runs",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{recon_base_url}}/reconciliations", "host": ["{{recon_base_url}}"], "path": ["reconciliations"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Stale Detection Service",
+      "item": [
+        {
+          "name": "4.1 List Stale Reconciliation Runs",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{stale_base_url}}/stale-runs", "host": ["{{stale_base_url}}"], "path": ["stale-runs"] }
+          }
+        }
+      ]
+    }
+  ]
+}
