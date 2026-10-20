@@ -37,7 +37,7 @@ jobs:
       - name: 📦 Install Frontend Dependencies & Build
         working-directory: frontend
         run: |
-          npm ci
+          npm install
           npm run build
           npx cap sync android
 
