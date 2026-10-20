@@ -42,9 +42,9 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-      - name: 🔄 Sync Capacitor Android
+      - name: 🔄 Copy Web Assets into Android
         working-directory: frontend
-        run: npx @capacitor/cli sync android
+        run: npx --yes @capacitor/cli copy android
 
       - name: 🔨 Grant Execute Permission for Gradlew
         working-directory: frontend/android
