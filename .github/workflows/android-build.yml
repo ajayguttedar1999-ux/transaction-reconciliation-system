@@ -60,12 +60,10 @@ jobs:
         working-directory: frontend/android
         run: |
           ./gradlew assembleDebug --stacktrace --no-daemon > gradle.log 2>&1 || STATUS=$?
-          cat gradle.log
           if [ "${STATUS:-0}" -ne 0 ]; then
-            echo "### ❌ Gradle Build Failed (Exit Code: $STATUS)" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            tail -n 80 gradle.log >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+            ERR_MSG=$(tail -n 25 gradle.log | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error title=Gradle Error::$ERR_MSG"
+            cat gradle.log
             exit $STATUS
           fi
 
