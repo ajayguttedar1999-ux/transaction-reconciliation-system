@@ -129,7 +129,7 @@ export default function App() {
             }}>
               Tier-1 Enterprise Core
             </span>
-            <span style={{ color: '#64748b', fontSize: '13px' }}>Fiserv Vision Next / Helix Architecture</span>
+            <span style={{ color: '#64748b', fontSize: '13px' }}>Distributed Financial Core</span>
           </div>
           <h1 style={{
             margin: 0,
@@ -147,7 +147,7 @@ export default function App() {
           </p>
         </div>
 
-        {/* Lead Engineer Card: Ajay Guttedar */}
+        {/* Engineer Profile Card */}
         <div style={{
           background: 'rgba(255, 255, 255, 0.03)',
           border: '1px solid rgba(56, 189, 248, 0.25)',
@@ -171,14 +171,14 @@ export default function App() {
             color: '#fff',
             boxShadow: '0 0 15px rgba(14, 165, 233, 0.4)'
           }}>
-            AG
+            A
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '15px', fontWeight: 700, color: '#f8fafc' }}>Ajay Guttedar</span>
-              <span style={{ color: '#38bdf8', fontSize: '14px' }} title="Verified Lead Engineer">✓</span>
+              <span style={{ fontSize: '15px', fontWeight: 700, color: '#f8fafc' }}>Ajay</span>
+              <span style={{ color: '#38bdf8', fontSize: '14px' }} title="Verified Engineer">✓</span>
             </div>
-            <div style={{ fontSize: '12px', color: '#38bdf8', fontWeight: 600 }}>Lead Systems Architect</div>
+            <div style={{ fontSize: '12px', color: '#38bdf8', fontWeight: 600 }}>Software Engineer</div>
             <div style={{ fontSize: '11px', color: '#64748b' }}>ajayguttedar1999-ux</div>
           </div>
         </div>
@@ -730,10 +730,10 @@ export default function App() {
         paddingTop: '20px'
       }}>
         <div>
-          <b>Transaction Reconciliation Demo System</b> &bull; Built & Engineered by <b>Ajay Guttedar</b>
+          <b>Transaction Reconciliation Demo System</b> &bull; Built & Engineered by <b>Ajay</b>
         </div>
         <div style={{ marginTop: '6px' }}>
-          Licensed under MIT &bull; Fiserv Vision Next / Helix Architecture
+          Licensed under MIT &bull; Enterprise Microservices Platform
         </div>
       </footer>
     </div>

@@ -1,7 +1,7 @@
 # High-Level Design (HLD) Document
-## Enterprise Transaction Reconciliation & Position Engine (Fiserv Vision Next / Helix Architecture)
+## Enterprise Transaction Reconciliation & Position Engine
 
-**Author:** Ajay Guttedar (Lead Systems Architect)  
+**Author:** Ajay  
 **System Classification:** Tier-1 Investment Banking & FinTech Platform  
 **Target SLAs:** 99.999% Availability &bull; < 1ms Read Latency &bull; 0% Data Loss  
 **Version:** 1.0.0  

@@ -9,9 +9,9 @@
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-326CE5.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-An enterprise-grade, event-driven financial transaction processing, reconciliation, and low-latency cache system modeled after modern banking platforms (e.g., Fiserv Vision Next / Helix architecture).
+An enterprise-grade, event-driven financial transaction processing, reconciliation, and low-latency cache system modeled after modern banking platforms.
 
-**Lead Systems Architect & Engineer:** **Ajay Guttedar**  
+**Author & Engineer:** **Ajay**  
 **Live Production Dashboard (Vercel):** [https://transaction-reconciliation-system-rho.vercel.app](https://transaction-reconciliation-system-rho.vercel.app)
 
 ---
@@ -222,7 +222,7 @@ Open **`http://localhost:3000`** in your browser (or use the live [Vercel Deploy
 
 ## 👨‍💻 Author & Engineering Credits
 
-* **Lead Systems Architect & Engineer:** **Ajay Guttedar**  
+* **Author & Engineer:** **Ajay**  
 * **GitHub Profile:** [@ajayguttedar1999-ux](https://github.com/ajayguttedar1999-ux)  
 * **Repository:** [transaction-reconciliation-system](https://github.com/ajayguttedar1999-ux/transaction-reconciliation-system)
 

@@ -1,7 +1,7 @@
 # Low-Level Design (LLD) Document
-## Transaction Reconciliation Demo System (Vision Next / Helix Architecture)
+## Transaction Reconciliation Demo System
 
-**Author:** Ajay Guttedar (Lead Systems Architect)  
+**Author:** Ajay  
 **System Classification:** Enterprise Financial Service / Distributed Ledger & Reconciliation Engine  
 **Version:** 1.0.0  
 **Target Runtimes:** Java 21 LTS, Spring Boot 3.3.4, Quarkus 3.15.1, React 18, PostgreSQL 16, Apache Kafka 7.5, Redis 7, Snowflake  
