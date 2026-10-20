@@ -30,8 +30,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: 🤖 Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: 🤖 Set Android SDK Environment
+        run: |
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
 
       - name: 📦 Install Frontend Dependencies & Build
         working-directory: frontend
