@@ -24,11 +24,11 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
-      - name: ☕ Set up Java 17 (Eclipse Temurin)
+      - name: ☕ Set up Java 21 (Eclipse Temurin)
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       - name: 🤖 Set Android SDK Environment & Install API 34
         run: |
@@ -56,26 +56,43 @@ jobs:
 
       - name: 📱 Compile Debug APK
         working-directory: frontend/android
-        run: |
-          ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee gradle_build.log || (echo "=== GRADLE ERROR LOG ===" && tail -n 100 gradle_build.log && exit 1)
+        run: ./gradlew assembleDebug --stacktrace --no-daemon
 
       - name: 📦 Compile Play Store Bundle (AAB)
         working-directory: frontend/android
-        run: ./gradlew :app:bundleDebug --no-daemon || ./gradlew bundle --no-daemon || true
+        run: ./gradlew :app:bundleDebug --stacktrace --no-daemon || true
 
       - name: 🔍 Find Generated Android Binaries
         run: |
-          find frontend/android/app/build -name "*.apk" -o -name "*.aab" || true
+          find frontend/android/app/build -name "*.apk" -o -name "*.aab"
 
-      - name: 📤 Upload Debug APK (Direct Install for Phone)
+      - name: 📤 Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: recon-platform-debug-apk
           path: frontend/android/app/build/outputs/apk/**/*.apk
 
-      - name: 📤 Upload Play Store Bundle (AAB)
+      - name: 📤 Upload Play Store Bundle Artifact
         uses: actions/upload-artifact@v4
         with:
           name: recon-platform-bundle-aab
           path: frontend/android/app/build/outputs/bundle/**/*.aab
           if-no-files-found: warn
+
+      - name: 🚀 Publish Direct Download Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: mobile-latest
+          name: "📱 Recon Platform Mobile App (Android APK)"
+          body: |
+            ### 📱 Recon Platform - Android Installation File
+            Download **`app-debug.apk`** below directly to your Android device to install and test!
+            
+            - **App:** Recon Platform
+            - **Package:** `com.ajay.reconplatform`
+            - **Author:** Ajay
+          files: |
+            frontend/android/app/build/outputs/apk/debug/app-debug.apk
+            frontend/android/app/build/outputs/bundle/debug/app-debug.aab
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
